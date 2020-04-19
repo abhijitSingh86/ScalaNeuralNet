@@ -6,8 +6,9 @@ import utils.AlgebraUtil
 
 class Layer private(private val nodes: Int, private val left: Option[Layer] = None, private val right: Option[Layer] = None) {
   val isInputLayer: Boolean = left.isDefined
-  val weightMatrixOp = left.map(x => AlgebraUtil.getWeightMatrix(nodes, x.nodes, isRandomFilled = true))
-  val biasVectorOp: Option[DenseVector[Double]] = left.map(x => AlgebraUtil.getRandomVector(nodes))
+  val weightMatrixOp = left.map(x => AlgebraUtil.getWeightMatrix(nodes, x.nodes, isRandomFilled = false))
+  val biasVectorOp: Option[DenseVector[Double]] = left.map(x => DenseVector.zeros(nodes))
+  //AlgebraUtil.getRandomVector(nodes))
 
   private def getZVector(activationsFromPreviousLayer: DenseVector[Double]): Option[DenseVector[Double]] = {
     val z: Option[DenseMatrix[Double]] = for {
@@ -30,10 +31,10 @@ class Layer private(private val nodes: Int, private val left: Option[Layer] = No
     }()
   }
 
-  def updateWeight(delta:DenseVector[Double], activation:DenseVector[Double], eta: Double = 0.001)={
+  def updateWeight(delta:DenseVector[Double], activation:DenseVector[Double], totalSize:Int , eta: Double = 0.001)={
     weightMatrixOp.map(w => {
       val updatedWeight = delta.asDenseMatrix.t*activation.asDenseMatrix
-      updatedWeight * w.map(x=> (x - eta))
+      updatedWeight * w.map(x=> (x - (eta/totalSize)))
     })
   }
 

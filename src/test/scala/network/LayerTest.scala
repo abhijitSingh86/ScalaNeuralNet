@@ -23,7 +23,7 @@ class LayerTest extends UnitSpec{
       val newBias = AlgebraUtil.getRandomVector(4)
       val weightOp = layer1.weightMatrixOp
       val activation = DenseVector.zeros[Double](5)
-      layer1.updateWeight(newBias,activation)
+      layer1.updateWeight(newBias,activation,1)
       weightOp.isDefined should be (true)
       weightOp.get.rows should be (4)
       weightOp.get.cols should be (5)
